@@ -29,7 +29,6 @@ return [
         ],
     ],
     'authManager' => [
-        'identityClass' => \App\Components\UserIdentity::class,
         'assignmentTable' => 'admin_assignment',
         'itemTable' => 'admin_item',
         'itemChildTable' => 'admin_item_child',
@@ -37,5 +36,10 @@ return [
         'skipRoutes' => [
             '/'
         ]
-    ]
+    ],
+    'user' => [
+        'identityClass' => \App\Model\AdminUserFrontend::class,
+        'authClass' => \App\Components\auth\QueryParamsAuth::class,
+        'secretKey' => 'jjjjjj'
+    ],
 ];

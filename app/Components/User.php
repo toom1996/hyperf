@@ -5,15 +5,18 @@ namespace App\Components;
 
 
 
+use App\Components\auth\AuthInterface;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\Utils\Context;
+use Psr\Http\Message\ResponseInterface;
+
+
 /**
  * Class User
  *
  * @author: TOOM <1023150697@qq.com>
  *
  */
-class User
+class User extends BaseComponents
 {
 
     /**
@@ -22,54 +25,102 @@ class User
      */
     private $authManager;
 
-    /**
-     * @Inject()
-     * @var UserIdentity
-     */
-    private $user;
+    private $tokenSecret;
+
 
     public function __construct()
     {
-        Context::set('_identity', false);
-        Context::set('_access', []);
-
-        $identityCookie = ['name' => '_identity', 'httpOnly' => true];
-        $loginUrl = ['site/login'];
-        $enableSession = true;
-        $enableAutoLogin = false;
-        $authTimeout;
-        $accessChecker;
-        $absoluteAuthTimeout;
-        $autoRenewCookie = true;
-        $idParam = '__id';
-        $authTimeoutParam = '__expire';
-        $absoluteAuthTimeoutParam = '__absoluteExpire';
-        $returnUrlParam = '__returnUrl';
-        $acceptableRedirectTypes = ['text/html', 'application/xhtml+xml'];
+        $this->tokenSecret = config('user.secretKey');
     }
 
-
+    /**
+     *
+     *
+     * @param  bool  $autoRenew
+     *
+     * @return mixed|null
+     */
     public function getIdentity($autoRenew = true)
     {
-        if ($this->_identity === false) {
-            if ($this->enableSession && $autoRenew) {
-                try {
-                    $this->_identity = null;
-                    $this->renewAuthStatus();
-                } catch (\Exception $e) {
-                    $this->_identity = false;
-                    throw $e;
-                } catch (\Throwable $e) {
-                    $this->_identity = false;
-                    throw $e;
-                }
+        if ($this->_getProperty('_identity') === null && $this->_getProperty('_identityIsGet') !== true) {
+            $identity = null;
+            /** @var  $authClass */
+            $authClass = config('user.authClass');
+            $authObj = new $authClass;
+            if ($authObj instanceof AuthInterface) {
+                $identity = $authObj->authenticate($this, $this->tokenSecret);
+                var_dump($identity);
             } else {
-                return null;
+                //TODO EXCEPTION
             }
+            $this->_setProperty('_identity', $identity);
+//            if ($this->enableSession && $autoRenew) {
+//                try {
+//                    $this->_identity = null;
+//                    $this->renewAuthStatus();
+//                } catch (\Exception $e) {
+//                    $this->_identity = false;
+//                    throw $e;
+//                } catch (\Throwable $e) {
+//                    $this->_identity = false;
+//                    throw $e;
+//                }
+//            } else {
+//                return null;
+//            }
+            $this->_setProperty('_identityIsGet', true);
         }
 
-        return $this->_identity;
+        return $this->_getProperty('_identity');
     }
+
+    /**
+     *
+     *
+     * @param $token
+     *
+     * @return |null
+     */
+    public function loginByAccessToken($token)
+    {
+        /** @var \App\Components\IdentityInterface $class */
+        $class = config('user.identityClass');
+        $identity = $class::findIdentityByAccessToken($token);
+        if ($identity && $this->login($identity)) {
+            return $identity;
+        }
+        return null;
+    }
+
+    /**
+     *
+     *
+     * @param $identity \App\Components\IdentityInterface
+     *
+     * @return bool
+     */
+    public function login($identity)
+    {
+        //SESSION 登陆
+//        $this->switchIdentity($identity, $duration);
+
+//        $id = $identity->getId();
+//        $ip = $this->request->cl
+//        if ($this->enableSession) {
+//            $log = "User '$id' logged in from $ip with duration $duration.";
+//        } else {
+//            $log = "User '$id' logged in from $ip. Session not enabled.";
+//        }
+
+//        $this->regenerateCsrfToken();
+        return !$this->getIsGuest();
+    }
+
+    public function switchIdentity($identity, $duration = 0)
+    {
+
+    }
+
 
     /**
      *
@@ -91,7 +142,6 @@ class User
         if ($allowCaching && empty($params)) {
             $this->_getProperty('_access')[$permissionName] = $access;
         }
-
         return $access;
     }
 
@@ -99,39 +149,32 @@ class User
      *
      *
      * @return |null
+     * @throws \Throwable
      */
     public function getId()
     {
-        $identity = $this->user->getUser();
+//        $identity = $this->user->getUser();
+        /** @var \App\Components\IdentityInterface $identity */
+        $identity = $this->getIdentity();
 
-        return $identity !== null ? $this->user->getId() : null;
+        return $identity !== null ? $identity->id : null;
     }
 
     /**
      *
      *
      * @return bool
+     * @throws \Throwable
      */
     public function getIsGuest()
     {
-        return $this->user->isGuest() === null;
+        return $this->getIdentity() === null;
     }
 
 
     public function loginRequired()
     {
-        //TODO
-        echo '对没登录对用户做跳转处理或者干啥的...';
+        throw new UnauthorizedHttpException('aaasdfsdf');
     }
-    /**
-     *
-     *
-     * @param $name
-     *
-     * @return mixed|null
-     */
-    private function _getProperty($name)
-    {
-        return Context::get($name);
-    }
+
 }

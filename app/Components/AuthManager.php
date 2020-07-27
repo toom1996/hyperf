@@ -749,6 +749,9 @@ class AuthManager extends BaseManager
      */
     protected function hasNoAssignments(array $assignments)
     {
+        echo 12313213123123;
+        var_dump($assignments);
+        var_dump(config('authManager.defaultRoles'));
         return empty($assignments) && empty(config('authManager.defaultRoles'));
     }
 }

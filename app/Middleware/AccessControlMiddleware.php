@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use App\Components\User;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use App\Components\User;
 
 class AccessControlMiddleware implements MiddlewareInterface
 {
@@ -23,7 +23,7 @@ class AccessControlMiddleware implements MiddlewareInterface
      * @Inject()
      * @var User
      */
-    private $_user;
+    private $user;
 
     public function __construct(ContainerInterface $container)
     {
@@ -45,10 +45,9 @@ class AccessControlMiddleware implements MiddlewareInterface
     {
         $path = $request->getUri()->getPath();
         $params = $request->getUri()->getQuery();
-        if ($this->_user->can($path, $params) !== false) {
+        if ($this->user->can($path, $params) !== false) {
             return true;
         }
-
         $this->denyAccess();
 
 //        $user = Yii::$app->user;
@@ -60,8 +59,8 @@ class AccessControlMiddleware implements MiddlewareInterface
 
     public function denyAccess()
     {
-        if ($this->_user->getIsGuest()) {
-            $this->_user->loginRequired();
+        if ($this->user->getIsGuest()) {
+            $this->user->loginRequired();
         } else {
             echo 'You are not allowed to perform this action.';
         }

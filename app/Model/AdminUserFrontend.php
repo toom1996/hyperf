@@ -3,12 +3,16 @@
 declare (strict_types=1);
 namespace App\Model;
 
+use App\Components\IdentityInterface;
 use Hyperf\DbConnection\Db;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\Cache\Annotation\Cacheable;
+use Hyperf\Utils\ApplicationContext;
+use Psr\SimpleCache\CacheInterface;
+
 /**
  */
-class AdminUserFrontend extends Model
+class AdminUserFrontend extends Model implements IdentityInterface
 {
 
     //被禁用的账户
@@ -44,28 +48,47 @@ class AdminUserFrontend extends Model
      */
     protected $casts = [];
 
-    /**
-     *
-     *
-     * @param $token
-     *
-     * @return bool
-     */
-    public function getIdentityByAccessToken($token)
+
+
+    public static function findIdentity($id)
     {
-        if ($query = $this->cache->get($token)) {
+
+    }
+
+
+    public static function findIdentityByAccessToken($token)
+    {
+        $cache = ApplicationContext::getContainer()->get(CacheInterface::class);
+        if ($query = $cache->get($token)) {
+            echo '__CACHE__' . PHP_EOL;
             return $query;
         }
 
-        $query = Db::table($this->table . ' as user')
+        $query = Db::table('admin_user_frontend' . ' as user')
             ->select('user.*', 'profile.user_token')
             ->leftJoin(AdminUserFrontendProfile::$tableName . ' as profile', 'user.id', '=', 'profile.uid')
             ->where('profile.user_token', $token)
             ->first() ?: false ;
+        echo '__DB__';
         if ($query !== false) {
-            $this->cache->set($token, $query);
+            $cache->set($token, $query);
         }
         return $query;
+    }
+
+    public function getId()
+    {
+        echo 666666666666666666;
+        // TODO: Implement getId() method.
+    }
+
+    public function getAuthKey()
+    {
+        // TODO: Implement getAuthKey() method.
+    }
+
+    public function validateAuthKey($authKey)
+    {
 
     }
 

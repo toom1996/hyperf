@@ -16,6 +16,11 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
 class BaseComponents
 {
 
+    public function __construct($config = [])
+    {
+    }
+
+
     /**
      * @Inject()
      * @var RequestInterface

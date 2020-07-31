@@ -39,7 +39,7 @@ class QueryParamsAuth extends AuthInterface
             }
         }
         if ($accessToken !== null) {
-            throw new UnauthorizedHttpException('Your request was made with invalid credentials.' .  __CLASS__);
+            throw new UnauthorizedHttpException('Your request was made with invalid credentials.');
             //TODO 抛出异常
         }
 
@@ -51,7 +51,7 @@ class QueryParamsAuth extends AuthInterface
         if ($secretKey === null) {
             return false;
         }
-
+        var_dump(substr(md5($token . $secretKey), -5));
         if(substr(md5($token . $secretKey), -5) !== $tokenSecret) {
             return false;
         }

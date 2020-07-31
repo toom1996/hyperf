@@ -4,7 +4,7 @@
 namespace App\Components;
 
 
-use Hyperf\Server\Exception\ServerException;
+use Hyperf\HttpMessage\Exception\UnauthorizedHttpException as BaseException;
 use Throwable;
 
 /**
@@ -12,7 +12,7 @@ use Throwable;
  *
  * @author: TOOM <1023150697@qq.com>
  */
-class UnauthorizedHttpException extends ServerException
+class UnauthorizedHttpException extends BaseException
 {
     public function __construct(
         $message = "Your request was made with invalid credentials.",

@@ -27,10 +27,13 @@ class User extends BaseComponents
 
     private $tokenSecret;
 
+    public $identityClass;
+
 
     public function __construct()
     {
         $this->tokenSecret = config('user.secretKey');
+        $this->identityClass = config('components.user.identityClass');
     }
 
     /**
@@ -38,7 +41,7 @@ class User extends BaseComponents
      *
      * @param  bool  $autoRenew
      *
-     * @return mixed|null
+     * @return mixed|null| \App\Components\IdentityInterface
      */
     public function getIdentity($autoRenew = true)
     {
@@ -49,7 +52,6 @@ class User extends BaseComponents
             $authObj = new $authClass;
             if ($authObj instanceof AuthInterface) {
                 $identity = $authObj->authenticate($this, $this->tokenSecret);
-                var_dump($identity);
             } else {
                 //TODO EXCEPTION
             }
@@ -68,9 +70,7 @@ class User extends BaseComponents
 //            } else {
 //                return null;
 //            }
-            $this->_setProperty('_identityIsGet', true);
         }
-
         return $this->_getProperty('_identity');
     }
 
@@ -84,43 +84,14 @@ class User extends BaseComponents
     public function loginByAccessToken($token)
     {
         /** @var \App\Components\IdentityInterface $class */
-        $class = config('user.identityClass');
+        $class = $this->identityClass;
         $identity = $class::findIdentityByAccessToken($token);
-        if ($identity && $this->login($identity)) {
+        if ($identity) {
+            $this->_setProperty('_identityIsGet', true);
             return $identity;
         }
         return null;
     }
-
-    /**
-     *
-     *
-     * @param $identity \App\Components\IdentityInterface
-     *
-     * @return bool
-     */
-    public function login($identity)
-    {
-        //SESSION 登陆
-//        $this->switchIdentity($identity, $duration);
-
-//        $id = $identity->getId();
-//        $ip = $this->request->cl
-//        if ($this->enableSession) {
-//            $log = "User '$id' logged in from $ip with duration $duration.";
-//        } else {
-//            $log = "User '$id' logged in from $ip. Session not enabled.";
-//        }
-
-//        $this->regenerateCsrfToken();
-        return !$this->getIsGuest();
-    }
-
-    public function switchIdentity($identity, $duration = 0)
-    {
-
-    }
-
 
     /**
      *
@@ -134,6 +105,13 @@ class User extends BaseComponents
      */
     public function can($permissionName, $params = [], $allowCaching = true)
     {
+        //TODO 缓存
+        $skipRoutes = array_flip(config('authManager.skipRoutes'));
+
+        if (isset($skipRoutes[$permissionName])) {
+            return true;
+        }
+
         if ($allowCaching && empty($params) && isset($this->_getProperty('_access')[$permissionName])) {
             return $this->_getProperty('_access')[$permissionName];
         }
@@ -174,7 +152,7 @@ class User extends BaseComponents
 
     public function loginRequired()
     {
-        throw new UnauthorizedHttpException('aaasdfsdf');
+        throw new ForbiddenHttpException('Login Required');
     }
 
 }

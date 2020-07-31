@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use App\Components\ComponentsApplication;
+use App\Components\ComponentsContainer;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpMessage\Exception\ForbiddenHttpException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -18,12 +21,6 @@ class AccessControlMiddleware implements MiddlewareInterface
      * @var ContainerInterface
      */
     protected $container;
-
-    /**
-     * @Inject()
-     * @var User
-     */
-    private $user;
 
     public function __construct(ContainerInterface $container)
     {
@@ -39,13 +36,16 @@ class AccessControlMiddleware implements MiddlewareInterface
     /**
      *
      *
-     * @param $request ServerRequestInterface
+     * @param $request
+     *
+     * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     private function checkAccess($request)
     {
         $path = $request->getUri()->getPath();
         $params = $request->getUri()->getQuery();
-        if ($this->user->can($path, $params) !== false) {
+        if (ComponentsApplication::$app->user->can($path, $params) !== false) {
             return true;
         }
         $this->denyAccess();
@@ -59,10 +59,10 @@ class AccessControlMiddleware implements MiddlewareInterface
 
     public function denyAccess()
     {
-        if ($this->user->getIsGuest()) {
-            $this->user->loginRequired();
+        if (ComponentsApplication::$app->user->getIsGuest()) {
+            ComponentsApplication::$app->user->loginRequired();
         } else {
-            echo 'You are not allowed to perform this action.';
+           throw new ForbiddenHttpException('You are not allowed to perform this action.');
         }
     }
 

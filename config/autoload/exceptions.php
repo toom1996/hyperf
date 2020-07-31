@@ -12,9 +12,10 @@ declare(strict_types=1);
 return [
     'handler' => [
         'http' => [
+            \App\Exception\Handler\AuthExceptionHandler::class,
+            \App\Exception\Handler\ForbiddenExceptionHandler::class,
             Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler::class,
-            App\Exception\Handler\AppExceptionHandler::class,
-            \App\Components\auth\AuthExceptionHandler::class
+            App\Exception\Handler\AppExceptionHandler::class
         ],
     ],
 ];

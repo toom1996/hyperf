@@ -3,10 +3,10 @@
 declare (strict_types=1);
 namespace App\Model;
 
+use App\Components\ComponentsApplication;
 use App\Components\IdentityInterface;
 use Hyperf\DbConnection\Db;
 use Hyperf\DbConnection\Model\Model;
-use Hyperf\Cache\Annotation\Cacheable;
 use Hyperf\Utils\ApplicationContext;
 use Psr\SimpleCache\CacheInterface;
 
@@ -21,6 +21,7 @@ class AdminUserFrontend extends Model implements IdentityInterface
     const STATUS_INACTIVE = 9;
     //已验证用户
     const STATUS_ACTIVE = 10;
+
 
 
     /**
@@ -92,4 +93,17 @@ class AdminUserFrontend extends Model implements IdentityInterface
 
     }
 
+    /**
+     * 生成密码哈希
+     * 生成的有点慢....
+     *
+     * @param $password
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public static function generatePasswordHash($password)
+    {
+        return ComponentsApplication::$app->security->generatePasswordHash($password);
+    }
 }

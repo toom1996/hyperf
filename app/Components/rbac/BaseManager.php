@@ -4,7 +4,7 @@
 namespace App\Components\rbac;
 
 
-use App\Components\BaseComponentsApplication;
+use App\Components\BaseComponents;
 
 /**
  * BaseManager is a base class implementing [[ManagerInterface]] for RBAC management.
@@ -19,7 +19,7 @@ use App\Components\BaseComponentsApplication;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-abstract class BaseManager extends BaseComponentsApplication implements ManagerInterface
+abstract class BaseManager extends BaseComponents implements ManagerInterface
 {
     /**
      * @var array a list of role names that are assigned to every user automatically without calling [[assign()]].

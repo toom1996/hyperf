@@ -34,7 +34,8 @@ return [
         'itemChildTable' => 'admin_item_child',
         'ruleTable' => 'admin_rule',
         'skipRoutes' => [
-            '/'
+            '/',
+            '/v1/user/site/sign-up'
         ]
     ],
     'user' => [
@@ -42,4 +43,11 @@ return [
         'authClass' => \App\Components\auth\QueryParamsAuth::class,
         'secretKey' => 'jjjjjj'
     ],
+    'components' => [
+        'user' => [
+            'identityClass' => \App\Model\AdminUserFrontend::class,
+            'authClass' => \App\Components\auth\QueryParamsAuth::class,
+            'secretKey' => 'jjjjjj'
+        ]
+    ]
 ];

@@ -14,6 +14,7 @@ namespace App\Controller;
 use App\Middleware\AccessControlMiddleware;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\Logger\LoggerFactory;
 
 /**
  * @AutoController()
@@ -21,9 +22,16 @@ use Hyperf\HttpServer\Annotation\Middleware;
  */
 class IndexController extends AbstractController
 {
-    public function index()
+
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger;
+
+    public function index(LoggerFactory $loggerFactory)
     {
-//        throw new \RuntimeException('sdfsdf');
+        $this->logger = $loggerFactory->get('log', 'default');
+        $this->logger->info("Your log message.");
         $user = $this->request->input('user', 'Hyperf');
         $method = $this->request->getMethod();
 

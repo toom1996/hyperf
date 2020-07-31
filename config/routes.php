@@ -11,4 +11,11 @@ declare(strict_types=1);
  */
 use Hyperf\HttpServer\Router\Router;
 
+Router::addGroup('/v1/user/', function () {
+    Router::post('site/sign-up','App\Controller\v1\user\SiteController@signUp');
+}, ['middleware' => [\App\Middleware\AccessControlMiddleware::class]]);
+
+
+
+//TEST
 Router::addRoute(['GET', 'POST', 'HEAD'], '/', 'App\Controller\IndexController@index', ['middleware' => [\App\Middleware\AccessControlMiddleware::class]]);

@@ -30,7 +30,7 @@ class Validator extends BaseFormModel
         'double' => 'yii\validators\NumberValidator',
         'each' => 'yii\validators\EachValidator',
         'email' => 'yii\validators\EmailValidator',
-        'exist' => 'yii\validators\ExistValidator',
+        'exist' => 'App\Components\validators\ExistValidator',
         'file' => 'yii\validators\FileValidator',
         'filter' => 'yii\validators\FilterValidator',
         'image' => 'yii\validators\ImageValidator',
@@ -56,6 +56,7 @@ class Validator extends BaseFormModel
 
     public $skipOnError = true;
     public $skipOnEmpty = true;
+    public $message;
     public $validateAttributes = [];
 
     /**

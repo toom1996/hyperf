@@ -12,8 +12,11 @@ declare(strict_types=1);
 return [
     'handler' => [
         'http' => [
-            \App\Exception\Handler\AuthExceptionHandler::class,
-            \App\Exception\Handler\ForbiddenExceptionHandler::class,
+            \App\Exception\Handler\AuthExceptionHandler::class, //token handler
+            \App\Exception\Handler\ForbiddenExceptionHandler::class, //角色路由 handler
+            \App\Exception\Handler\FormExceptionHandler::class, //modelForm handler
+
+
             Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler::class,
             App\Exception\Handler\AppExceptionHandler::class
         ],

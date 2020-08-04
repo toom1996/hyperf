@@ -4,8 +4,7 @@
 namespace App\Components;
 
 
-use App\Components\BaseComponents;
-use App\Components\Helper\StringHelper;
+use App\Helpers\StringHelper;
 use Exception;
 
 class Security extends BaseComponents

@@ -6,6 +6,7 @@ namespace App\Form;
 
 use App\Components\BaseFormModel;
 use App\Components\ComponentsApplication;
+use App\Components\FormException;
 use App\Model\AdminUserFrontend;
 use Hyperf\DbConnection\Db;
 
@@ -20,6 +21,7 @@ class SiteForm extends BaseFormModel
 
     public function sign()
     {
+        throw new FormException('注册失败');
         $time = time();
 
         $insertParam = [
@@ -30,8 +32,9 @@ class SiteForm extends BaseFormModel
             'created_at' => $time,
             'updated_at' => $time,
         ];
-        $a = Db::table('admin_user_frontend')->insert($insertParam);
+//        $model = Db::table('admin_user_frontend')->insert($insertParam);
 
-//        var_dump(ComponentsApplication::$app->user->identityClass::generatePasswordHash(123123));
+
+        return true;
     }
 }

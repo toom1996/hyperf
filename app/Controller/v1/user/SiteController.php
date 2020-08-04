@@ -5,6 +5,7 @@ namespace App\Controller\v1\user;
 
 
 use App\Components\ComponentsApplication;
+use App\Components\FormException;
 use App\Controller\BaseController;
 use App\Form\SiteForm;
 use Hyperf\Di\Annotation\Inject;
@@ -34,17 +35,21 @@ class SiteController extends BaseController
 
     public function signUp()
     {
+        throw new FormException('~~');
         $this->validator->setScenario($this->validator::SCENARIO_SIGN_UP);
         $this->validator->setAttributes($this->request->post());
         if (!$this->validator->validate()) {
-           return [
-               'code' => 400,
-               'message' => $this->validator->getFirstError()
-           ];
+            return [
+                'code' => 400,
+                'message' => $this->validator->getFirstError()
+            ];
         }
-
         $model = new SiteForm($this->validator->getAttributes());
         $model->sign();
+        return [
+            'code' => 200,
+            'message' => '注册成功',
+        ];
 
     }
 }

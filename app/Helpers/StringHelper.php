@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Components\Helper;
+namespace App\Helpers;
 
 /**
  * BaseStringHelper provides concrete implementation for [[StringHelper]].

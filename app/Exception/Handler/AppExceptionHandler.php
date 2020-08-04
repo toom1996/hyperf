@@ -17,25 +17,21 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
-class AppExceptionHandler extends ExceptionHandler
+class AppExceptionHandler extends BaseHandler
 {
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
 
-
-    public function __construct(StdoutLoggerInterface $logger)
+    public function __construct($name = __CLASS__, $group = 'default')
     {
-        $this->logger = $logger;
+        parent::__construct($name, $group);
     }
 
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
-        $this->logger->error(sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
-        $this->logger->error($throwable->getTraceAsString());
-
-        return $response->withHeader('Server', 'Hyperf')->withStatus(500)->withBody(new SwooleStream($throwable->getMessage()));
+        $this->stopPropagation();
+        $this->logger->info(sprintf('%s[%s] in %s %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile(), $throwable->getTraceAsString()));
+        return $response->withStatus(200)
+            ->withAddedHeader('content-type', 'application/json; charset=utf-8')
+            ->withBody(new SwooleStream($this->getThrowableData($throwable)));
     }
 
     public function isValid(Throwable $throwable): bool

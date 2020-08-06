@@ -38,16 +38,18 @@ return [
             '/v1/user/site/sign-up'
         ]
     ],
-    'user' => [
-        'identityClass' => \App\Model\AdminUserFrontend::class,
-        'authClass' => \App\Components\auth\QueryParamsAuth::class,
-        'secretKey' => 'jjjjjj'
-    ],
     'components' => [
         'user' => [
             'identityClass' => \App\Model\AdminUserFrontend::class,
             'authClass' => \App\Components\auth\QueryParamsAuth::class,
-            'secretKey' => 'jjjjjj'
+            'secretKey' => 'toomhub'
+        ],
+        'wechat' => [
+            'class' => 'App\Components\wechat\Wechat',
+            'miniApp' => [
+                'app_id' => 'wxa9a7f53bff2fc937',
+                'secret' => '971869511ee44662c56bcf8a833bd679'
+            ],
         ]
     ]
 ];

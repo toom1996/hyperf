@@ -12,7 +12,7 @@ use Psr\SimpleCache\CacheInterface;
 
 /**
  */
-class AdminUserFrontend extends Model implements IdentityInterface
+class UserModel extends Model implements IdentityInterface
 {
 
     //被禁用的账户
@@ -23,19 +23,15 @@ class AdminUserFrontend extends Model implements IdentityInterface
     const STATUS_ACTIVE = 10;
 
 
-
-    /**
-     * @\Hyperf\Di\Annotation\Inject()
-     * @var \Psr\SimpleCache\CacheInterface
-     */
-    protected $cache;
-
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'admin_user_frontend';
+    protected $table = 'admin_user';
+
+    public static $tableName = 'admin_user';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -75,6 +71,14 @@ class AdminUserFrontend extends Model implements IdentityInterface
             $cache->set($token, $query);
         }
         return $query;
+    }
+
+
+    public static function findIdentityByMiniProgramOpenId($openid)
+    {
+        return Db::table('admin_user')->where([
+            'mini_openid' => $openid
+        ])->first() ?: false;
     }
 
     public function getId()

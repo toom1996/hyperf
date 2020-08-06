@@ -16,6 +16,11 @@ Router::addGroup('/v1/user/', function () {
 }, ['middleware' => [\App\Middleware\AccessControlMiddleware::class]]);
 
 
+Router::addGroup('/mini', function () {
+    Router::get('/index','App\Controller\mini\v1\PostController@index');
+    Router::post('/login','App\Controller\mini\v1\SiteController@login');
+});
+
 
 //TEST
 Router::addRoute(['GET', 'POST', 'HEAD'], '/', 'App\Controller\IndexController@index', ['middleware' => [\App\Middleware\AccessControlMiddleware::class]]);

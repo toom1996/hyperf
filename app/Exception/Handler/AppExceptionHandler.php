@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace App\Exception\Handler;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\DbConnection\Db;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\ResponseInterface;
@@ -29,6 +30,7 @@ class AppExceptionHandler extends BaseHandler
     {
         $this->stopPropagation();
         $this->logger->info(sprintf('%s[%s] in %s %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile(), $throwable->getTraceAsString()));
+        Db::rollBack();
         return $response->withStatus(200)
             ->withAddedHeader('content-type', 'application/json; charset=utf-8')
             ->withBody(new SwooleStream($this->getThrowableData($throwable)));

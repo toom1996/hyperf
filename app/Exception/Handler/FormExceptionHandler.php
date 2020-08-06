@@ -27,6 +27,7 @@ class FormExceptionHandler extends BaseHandler
     {
         if ($throwable instanceof FormException) {
             $this->stopPropagation();
+            var_dump($throwable->getMessage());
             $this->logger->info(sprintf('%s[%s] in %s %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile(), $throwable->getTraceAsString()));
             $this->logger->info(VarDumper::dumpAsString($this->request->getQueryParams()));
             $this->logger->info(VarDumper::dumpAsString($this->request->post()));

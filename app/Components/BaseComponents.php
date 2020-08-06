@@ -7,6 +7,8 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Utils\Context;
 use Hyperf\HttpServer\Contract\ResponseInterface;
+use Psr\Container\ContainerInterface;
+
 /**
  * Class BaseComponents
  *
@@ -20,6 +22,11 @@ class BaseComponents
     {
     }
 
+    /**
+     * @Inject
+     * @var ContainerInterface
+     */
+    protected $container;
 
     /**
      * @Inject()
@@ -42,4 +49,20 @@ class BaseComponents
     {
         return Context::set($name, $value);
     }
+
+//    public function __get($name)
+//    {
+//        $getter = 'get' . $name;
+//        if (method_exists($this, $getter)) {
+//            // read property, e.g. getName()
+//            return $this->$getter();
+//        }
+//
+//        if (method_exists($this, 'set' . $name)) {
+//            //TODO 抛出异常
+//            throw new InvalidCallException('Getting write-only property: ' . get_class($this) . '::' . $name);
+//        }
+//        //TODO 抛出异常
+//        throw new UnknownPropertyException('Getting unknown property: ' . get_class($this) . '::' . $name);
+//    }
 }

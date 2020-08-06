@@ -35,7 +35,6 @@ class SiteController extends BaseController
 
     public function signUp()
     {
-        throw new FormException('~~');
         $this->validator->setScenario($this->validator::SCENARIO_SIGN_UP);
         $this->validator->setAttributes($this->request->post());
         if (!$this->validator->validate()) {
@@ -46,10 +45,7 @@ class SiteController extends BaseController
         }
         $model = new SiteForm($this->validator->getAttributes());
         $model->sign();
-        return [
-            'code' => 200,
-            'message' => '注册成功',
-        ];
+
 
     }
 }

@@ -48,7 +48,7 @@ class User extends BaseComponents
         if ($this->_getProperty('_identity') === null && $this->_getProperty('_identityIsGet') !== true) {
             $identity = null;
             /** @var  $authClass */
-            $authClass = config('user.authClass');
+            $authClass = config('components.user.authClass');
             $authObj = new $authClass;
             if ($authObj instanceof AuthInterface) {
                 $identity = $authObj->authenticate($this, $this->tokenSecret);
@@ -92,6 +92,7 @@ class User extends BaseComponents
         }
         return null;
     }
+
 
     /**
      *
